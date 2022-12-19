@@ -2,6 +2,7 @@ library( dplyr )
 library( irs990efile )
 library( jsonlite )
 
+# https://www.dropbox.com/s/pdfls0e1jz9trvi/index-nccs.rds?dl=0
 
 index <- readRDS( "index-nccs.rds" )
 
