@@ -1,4 +1,4 @@
-start_time <- Sys.time()
+start.time <- Sys.time()
 
 
 X <- matrix(rnorm(50000*1000), 50000, 1000)
@@ -7,8 +7,10 @@ y <- runif(1) + X %*% b + rnorm(50000)
 model <- lm(y ~ X)
 
 
-end_time <- Sys.time()
+end.time <- Sys.time()
 
-end_time - start_time
+end.time - start.time
 
-
+print( difftime( start.time, end.time, units="minutes") )
+print( difftime( start.time, end.time, units="hours") )
+print( difftime( start.time, end.time, units="days") )
