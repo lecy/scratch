@@ -1,16 +1,7 @@
-library( dplyr )
-library( irs990efile )
-library( jsonlite )
-
-# https://www.dropbox.com/s/pdfls0e1jz9trvi/index-nccs.rds?dl=0
-
-index <- readRDS( "index-nccs.rds" )
-index <- dplyr::filter( index, FormType %in% c("990","990EZ") )
-
 
 
 ########################
-######################## FIX FUNCTIONS
+######################## USE THESE FUNCTIONS
 ########################
 
 build_rdb_table <- function (url, table.name, v.map) 
@@ -102,7 +93,8 @@ build_tables <- function( index=NULL, years=NULL, table.name )
   
   }
 
-  bind_data( years=years )
+  for( i in years )
+  { bind_data( year=i ) }
   
   end.build.time <- Sys.time()
   print( paste0( "DATABASE BUILD FINISH TIME: ", Sys.time() ) )
@@ -179,7 +171,9 @@ build_year <- function( year, table.name )
 
     end.time <- Sys.time()
 
-    print( paste0( "Batch ", i ) )
+    b.num <- substr( 10000 + i, 2, 5 ) 
+      
+    print( paste0( "Batch ", b.num ) )
     print( end.time - start.time )
     # print( paste( "There are ", length(failed.urls), " failed XML URLs to re-try." ) )
   
@@ -188,8 +182,6 @@ build_year <- function( year, table.name )
     # time <- format(Sys.time(), "%b-%d-%Y-%Hh-%Mm")
     # rand <- paste( sample(LETTERS,5), collapse="" )
     # time <- paste0( "time-", time, "-", rand  )
-
-    b.num <- substr( 10000 + i, 2, 5 ) 
 
     df <- dplyr::bind_rows( results.list )
     saveRDS( df, paste0( "batch", "-", b.num, ".rds" ) )
@@ -218,9 +210,10 @@ build_year <- function( year, table.name )
 
 bind_data <- function( year )
 {
-
-  dir.create( "COMPILED" )  
+   
   setwd( year ) 
+  dir.create( "COMPILED" ) 
+    
   file.names <- dir()
   these <- grepl( "*.rds", file.names )
   
@@ -238,11 +231,11 @@ bind_data <- function( year )
   d <- unique(d)
   nrow( d )
 
-  setwd( "../COMPILED" )
+  # setwd( "../COMPILED" )
  
    
-  write.csv( d, paste0( "PARTVII-", year, ".csv", row.names=F ) )
-  saveRDS(   d, paste0( "PARTVII-", year, ".rds" )  )    
+  write.csv( d, paste0( "COMPILED/PARTVII-", year, ".csv", row.names=F ) )
+  saveRDS(   d, paste0( "COMPILED/PARTVII-", year, ".rds" )  )    
 
   setwd( ".." )       
 }
@@ -253,6 +246,15 @@ bind_data <- function( year )
 #########################################
 #########################################   F9-P07-T01-COMPENSATION
 #########################################
+
+library( dplyr )
+library( irs990efile )
+library( jsonlite )
+
+# https://www.dropbox.com/s/pdfls0e1jz9trvi/index-nccs.rds?dl=0
+
+index <- readRDS( "index-nccs.rds" )
+index <- dplyr::filter( index, FormType %in% c("990","990EZ") )
 
 
 find_group_names( table.name="F9-P07-T01-COMPENSATION" )
